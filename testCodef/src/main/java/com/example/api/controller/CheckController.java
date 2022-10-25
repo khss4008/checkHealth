@@ -1,7 +1,13 @@
 package com.example.api.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import javax.validation.Valid;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +45,23 @@ public class CheckController {
 	}
 
 	@GetMapping("/getHealthCheckData")
-	@ApiOperation(value = "값을 가져오는지 확인한다", notes = "확인하자")
-	public ResponseEntity<?> findEmail() throws Exception {
+	@ApiOperation(value = "건강검진 내역을 가져오는지 확인한다", notes = "확인하자")
+	public ResponseEntity<?> getHealthCheckData() throws Exception {
 		codef.getHealthCheckData();
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@GetMapping("/getNutrientsData")
+	@ApiOperation(value = "nutrients 값을 가져오는지 확인한다", notes = "확인하자")
+	public ResponseEntity<?> getNutrientsData() throws Exception {
+		String myKey = "93ee3acbb162464d845f";
+		//10개 데이터 json으로 가져오기
+		URL url = new URL("http://openapi.foodsafetykorea.go.kr/api/" + myKey + "/C003/json/1/10");
+		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+		String result = br.readLine();
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = (JSONObject)jsonParser.parse(result);
+		System.out.println(jsonObject);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
